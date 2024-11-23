@@ -33,7 +33,9 @@
     <div id="output"></div>
   </div>
 
+  <!-- Include Html5QrCode Library -->
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+
   <script>
     const stageOrder = ["stage1", "stage2", "stage3"]; // Define correct order of stages
     let currentStageIndex = 0;
@@ -58,7 +60,9 @@
         (error) => {
           console.error("QR Code scan error:", error);
         }
-      );
+      ).catch((err) => {
+        console.error("Unable to start the scanner:", err);
+      });
     }
 
     startQrScanner();
