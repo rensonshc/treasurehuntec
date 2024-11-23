@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Treasure Hunt</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      margin-top: 50px;
+    }
+    video {
+      width: 100%;
+      max-width: 300px;
+    }
+    #output {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Treasure Hunt</h1>
+    <p>Scan the QR code to get your next clue!</p>
+    <video id="preview"></video>
+    <div id="output"></div>
+  </div>
+
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+  <script>
+    const stageOrder = ["stage1", "stage2", "stage3"]; // Define correct order of stages
+    let currentStageIndex = 0;
+
+    const html5QrCode = new Html5Qrcode("preview");
+
+    function startQrScanner() {
+      html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        (decodedText) => {
+          const stage = decodedText.split("/").pop(); // Extract stage ID
+          const expectedStage = stageOrder[currentStageIndex];
+
+          if (stage === expectedStage) {
+            document.getElementById("output").innerText = `Correct! Here is your clue for ${stage}.`;
+            currentStageIndex++; // Move to the next stage
+          } else {
+            document.getElementById("output").innerText = `Wrong stage! Please scan the QR code for ${expectedStage}.`;
+          }
+        },
+        (error) => {
+          console.error("QR Code scan error:", error);
+        }
+      );
+    }
+
+    startQrScanner();
+  </script>
+</body>
+</html>
