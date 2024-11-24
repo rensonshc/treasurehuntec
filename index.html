@@ -6,7 +6,6 @@
   <meta name="description" content="Treasure Hunt QR Scanner">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Treasure Hunt - East Campus</title>
-  <!-- Styling -->
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -51,27 +50,24 @@
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
-  <!-- Logo -->
   <img src="SHlogo.jpeg" alt="Sacred Heart College Logo" class="logo">
   <h1>Treasure Hunt - East Campus</h1>
   <p>Scan the QR codes to advance in the treasure hunt!</p>
-
-  <!-- QR Scanner -->
   <div id="reader"></div>
   <button id="startScanner">Start QR Scanner</button>
   <button id="stopScanner" style="display: none;">Stop QR Scanner</button>
   <div id="error-message"></div>
-
-  <!-- JavaScript -->
   <script>
     let qrCodeReader;
 
-    // Handle Start Scanner
+    // Function to start the QR scanner
     document.getElementById('startScanner').addEventListener('click', () => {
       qrCodeReader = new Html5Qrcode("reader");
+
+      console.log("Attempting to start the QR scanner...");
       qrCodeReader
         .start(
-          { facingMode: "environment" }, // Request the back camera
+          { facingMode: "environment" }, // Request back camera
           {
             fps: 10,
             qrbox: { width: 250, height: 250 },
@@ -79,52 +75,66 @@
           },
           (decodedText) => {
             alert(`Scanned content: ${decodedText}`);
-            stopScanner(); // Stop scanner after successful scan
+            stopScanner();
           },
           (errorMessage) => {
-            console.log(`QR Code scan error: ${errorMessage}`);
+            console.log(`Scanning error: ${errorMessage}`);
           }
         )
         .catch((err) => {
           displayError(
-            "Unable to access the camera. Please check your permissions or update your browser/iOS version."
+            "Camera failed to start. Check permissions or update your device/browser."
           );
-          console.error("Initialization error:", err);
+          console.error("QR Scanner initialization error:", err);
         });
 
+      // Show scanner UI
       document.getElementById("reader").style.display = "block";
       toggleButtons(true);
     });
 
-    // Handle Stop Scanner
+    // Function to stop the QR scanner
     document.getElementById('stopScanner').addEventListener('click', stopScanner);
 
-    // Stop the QR scanner
     function stopScanner() {
-      qrCodeReader
-        .stop()
-        .then(() => {
-          document.getElementById("reader").style.display = "none";
-          toggleButtons(false);
-        })
-        .catch((err) => {
-          displayError("Error stopping the scanner. Please refresh the page.");
-          console.error("Error stopping scanner:", err);
-        });
+      if (qrCodeReader) {
+        qrCodeReader
+          .stop()
+          .then(() => {
+            console.log("Scanner stopped successfully.");
+            document.getElementById("reader").style.display = "none";
+            toggleButtons(false);
+          })
+          .catch((err) => {
+            console.error("Error stopping scanner:", err);
+            displayError("Error stopping the scanner. Please refresh the page.");
+          });
+      }
     }
 
-    // Toggle buttons visibility
+    // Helper function to toggle buttons
     function toggleButtons(isScanning) {
-      document.getElementById("startScanner").style.display = isScanning ? "none" : "block";
-      document.getElementById("stopScanner").style.display = isScanning ? "block" : "none";
+      document.getElementById("startScanner").style.display = isScanning
+        ? "none"
+        : "block";
+      document.getElementById("stopScanner").style.display = isScanning
+        ? "block"
+        : "none";
     }
 
-    // Display error message
+    // Helper function to display errors
     function displayError(message) {
       const errorDiv = document.getElementById("error-message");
       errorDiv.style.display = "block";
       errorDiv.textContent = message;
     }
+
+    // Debugging info
+    console.log("Script loaded successfully.");
+    console.log(
+      "Check if your browser supports camera access: ",
+      navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === "function"
+    );
   </script>
 </body>
 </html>
