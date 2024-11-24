@@ -1,130 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treasure Hunt East Campus</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: url('eastcampus.PNG') no-repeat center center fixed;
-            background-size: cover;
-            color: #fff;
-            text-align: center;
-        }
-        .header {
-            background-color: rgba(0, 0, 0, 0.6);
-            padding: 20px;
-        }
-        .header img {
-            height: 80px;
-        }
-        .title {
-            font-size: 2.5em;
-            margin: 20px 0;
-            text-shadow: 2px 2px 5px black;
-        }
-        .scanner {
-            margin-top: 40px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
-            padding: 20px;
-            display: inline-block;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-        }
-        #reader {
-            width: 300px;
-            margin: 10px auto;
-            border: 2px solid black;
-            background: white;
-            display: none; /* Hidden initially */
-        }
-        .scanner button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1.2em;
-            cursor: pointer;
-            border-radius: 5px;
-            margin-top: 10px;
-        }
-        .scanner button:hover {
-            background-color: #45a049;
-        }
-        footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            text-align: center;
-            padding: 10px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Treasure Hunt QR Scanner">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Treasure Hunt - East Campus</title>
+  <!-- Add styling -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom right, #009688, #4caf50);
+      color: white;
+      text-align: center;
+    }
+    #reader {
+      width: 100%;
+      max-width: 500px;
+      margin: 20px auto;
+      border: 2px solid white;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      border: none;
+      color: white;
+      background-color: #ff5722;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #e64a19;
+    }
+    .logo {
+      margin: 20px auto;
+      width: 100px;
+    }
+  </style>
+  <!-- Include Html5Qrcode library -->
+  <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
-    <div class="header">
-        <img src="SHlogo.jpeg" alt="Sacred Heart College Logo">
-        <h1 class="title">Treasure Hunt East Campus</h1>
-    </div>
-    <div class="scanner">
-        <h2>Scan QR Code</h2>
-        <button id="startScanner">Start Scanner</button>
-        <button id="stopScanner" style="display:none;">Stop Scanner</button>
-        <div id="reader"></div>
-    </div>
-    <footer>
-        <p>Pandit Karuppan Road, Thevara, Kochi - 682013 | 
-            <a href="https://shcollege.ac.in" style="color: lightblue;">shcollege.ac.in</a>
-        </p>
-    </footer>
+  <!-- Logo -->
+  <img src="SHlogo.jpeg" alt="Sacred Heart College Logo" class="logo">
+  <h1>Treasure Hunt - East Campus</h1>
+  <p>Scan the QR codes to advance in the treasure hunt!</p>
 
-    <!-- HTML5-QRCode Library -->
-    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
-    <script>
-        const qrCodeReader = new Html5Qrcode("reader");
+  <!-- QR Scanner -->
+  <div id="reader"></div>
+  <button id="startScanner">Start QR Scanner</button>
+  <button id="stopScanner" style="display: none;">Stop QR Scanner</button>
 
-        // Start the QR Code Scanner
-        <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=1.1"></script>
-        document.getElementById("startScanner").addEventListener("click", function () {
-            qrCodeReader.start(
-                { facingMode: "environment" }, // Use back camera by default
-                {
-                    fps: 10, // Scanning speed
-                    qrbox: { width: 250, height: 250 } // QR Code scanning area
-                },
-                (decodedText, decodedResult) => {
-                    alert(`Scanned content: ${decodedText}`);
-                    qrCodeReader.stop(); // Automatically stop the scanner after successful scan
-                    document.getElementById("reader").style.display = "none";
-                    document.getElementById("startScanner").style.display = "block";
-                    document.getElementById("stopScanner").style.display = "none";
-                },
-                (errorMessage) => {
-                    console.log(`QR Code scan error: ${errorMessage}`);
-                }
-            ).then(() => {
-                document.getElementById("reader").style.display = "block";
-                document.getElementById("startScanner").style.display = "none";
-                document.getElementById("stopScanner").style.display = "block";
-            }).catch(err => {
-                console.error(`Failed to start scanner: ${err}`);
-                alert("Unable to access the camera. Please check permissions.");
-            });
+  <!-- JavaScript -->
+  <script>
+    let qrCodeReader;
+
+    document.getElementById('startScanner').addEventListener('click', () => {
+      // Initialize the QR Code Reader
+      qrCodeReader = new Html5Qrcode("reader");
+
+      qrCodeReader
+        .start(
+          { facingMode: "environment" }, // Use back camera
+          {
+            fps: 10, // Frames per second
+            qrbox: { width: 250, height: 250 }, // Scanning area dimensions
+            rememberLastUsedCamera: true,
+            disableFlip: true // Prevent unnecessary camera flipping
+          },
+          (decodedText) => {
+            alert(`Scanned content: ${decodedText}`);
+            qrCodeReader.stop();
+            document.getElementById("reader").style.display = "none";
+            document.getElementById("startScanner").style.display = "block";
+            document.getElementById("stopScanner").style.display = "none";
+          },
+          (errorMessage) => {
+            console.log(`Error scanning QR code: ${errorMessage}`);
+          }
+        )
+        .catch((err) => {
+          alert(`Failed to access the camera. Please allow camera permissions or use a supported browser.`);
+          console.error(err);
         });
 
-        // Stop the QR Code Scanner
-        document.getElementById("stopScanner").addEventListener("click", function () {
-            qrCodeReader.stop().then(() => {
-                document.getElementById("reader").style.display = "none";
-                document.getElementById("startScanner").style.display = "block";
-                document.getElementById("stopScanner").style.display = "none";
-            }).catch(err => {
-                console.error("Error stopping scanner: ", err);
-            });
-        });
-    </script>
+      document.getElementById("reader").style.display = "block";
+      document.getElementById("startScanner").style.display = "none";
+      document.getElementById("stopScanner").style.display = "block";
+    });
+
+    document.getElementById('stopScanner').addEventListener('click', () => {
+      qrCodeReader.stop().then(() => {
+        document.getElementById("reader").style.display = "none";
+        document.getElementById("startScanner").style.display = "block";
+        document.getElementById("stopScanner").style.display = "none";
+      }).catch((err) => {
+        console.error("Error stopping scanner: ", err);
+      });
+    });
+  </script>
 </body>
 </html>
