@@ -87,9 +87,10 @@
         const qrCodeReader = new Html5Qrcode("reader");
 
         // Start the QR Code Scanner
+        <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js?v=1.1"></script>
         document.getElementById("startScanner").addEventListener("click", function () {
             qrCodeReader.start(
-                { facingMode: "user" }, // Use back camera by default
+                { facingMode: "environment" }, // Use back camera by default
                 {
                     fps: 10, // Scanning speed
                     qrbox: { width: 250, height: 250 } // QR Code scanning area
