@@ -50,57 +50,71 @@
   <p>Scan the QR codes to advance in the treasure hunt!</p>
 
   <!-- QR Scanner -->
-  <div id="reader"></div>
+  <div id="reader" style="display: none;"></div>
   <button id="startScanner">Start QR Scanner</button>
   <button id="stopScanner" style="display: none;">Stop QR Scanner</button>
 
   <!-- JavaScript -->
   <script>
+    // Declare a variable to store the QR Code Reader instance
     let qrCodeReader;
 
+    // Start Scanner button functionality
     document.getElementById('startScanner').addEventListener('click', () => {
       // Initialize the QR Code Reader
       qrCodeReader = new Html5Qrcode("reader");
 
+      // Start the reader and request back camera access
       qrCodeReader
         .start(
-          { facingMode: "environment" }, // Use back camera
+          { facingMode: "environment" }, // Use the back camera
           {
             fps: 10, // Frames per second
             qrbox: { width: 250, height: 250 }, // Scanning area dimensions
-            rememberLastUsedCamera: true,
+            rememberLastUsedCamera: true, // Helps Safari remember permissions
             disableFlip: true // Prevent unnecessary camera flipping
           },
           (decodedText) => {
+            // Handle successful QR code scan
             alert(`Scanned content: ${decodedText}`);
-            qrCodeReader.stop();
-            document.getElementById("reader").style.display = "none";
-            document.getElementById("startScanner").style.display = "block";
-            document.getElementById("stopScanner").style.display = "none";
+            qrCodeReader.stop(); // Stop the scanner after a successful scan
+            toggleScannerButtons(false); // Reset buttons
           },
           (errorMessage) => {
-            console.log(`Error scanning QR code: ${errorMessage}`);
+            // Handle errors during scanning
+            console.log(`QR Code scan error: ${errorMessage}`);
           }
         )
         .catch((err) => {
-          alert(`Failed to access the camera. Please allow camera permissions or use a supported browser.`);
-          console.error(err);
+          // Handle errors during the initialization
+          alert("Failed to start the QR scanner. Please ensure camera permissions are enabled.");
+          console.error("Initialization error: ", err);
         });
 
+      // Display the scanner and update button visibility
       document.getElementById("reader").style.display = "block";
-      document.getElementById("startScanner").style.display = "none";
-      document.getElementById("stopScanner").style.display = "block";
+      toggleScannerButtons(true);
     });
 
+    // Stop Scanner button functionality
     document.getElementById('stopScanner').addEventListener('click', () => {
-      qrCodeReader.stop().then(() => {
-        document.getElementById("reader").style.display = "none";
-        document.getElementById("startScanner").style.display = "block";
-        document.getElementById("stopScanner").style.display = "none";
-      }).catch((err) => {
-        console.error("Error stopping scanner: ", err);
-      });
+      qrCodeReader
+        .stop()
+        .then(() => {
+          // Successfully stopped the scanner
+          document.getElementById("reader").style.display = "none";
+          toggleScannerButtons(false);
+        })
+        .catch((err) => {
+          console.error("Error stopping scanner: ", err);
+        });
     });
+
+    // Helper function to toggle button visibility
+    function toggleScannerButtons(isScanning) {
+      document.getElementById("startScanner").style.display = isScanning ? "none" : "block";
+      document.getElementById("stopScanner").style.display = isScanning ? "block" : "none";
+    }
   </script>
 </body>
 </html>
