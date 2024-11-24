@@ -89,7 +89,7 @@
         // Start the QR Code Scanner
         document.getElementById("startScanner").addEventListener("click", function () {
             qrCodeReader.start(
-                { facingMode: "environment" }, // Use back camera by default
+                { facingMode: "user" }, // Use back camera by default
                 {
                     fps: 10, // Scanning speed
                     qrbox: { width: 250, height: 250 } // QR Code scanning area
