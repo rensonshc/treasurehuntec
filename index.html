@@ -46,7 +46,6 @@
       display: none;
     }
   </style>
-  <!-- Include Html5Qrcode library -->
   <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
 </head>
 <body>
@@ -59,6 +58,13 @@
   <div id="error-message"></div>
   <script>
     let qrCodeReader;
+
+    // Check for browser compatibility
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      displayError(
+        "Your browser does not support camera access. Please update your browser or try a different one (e.g., Safari)."
+      );
+    }
 
     // Function to start the QR scanner
     document.getElementById('startScanner').addEventListener('click', () => {
@@ -83,7 +89,7 @@
         )
         .catch((err) => {
           displayError(
-            "Camera failed to start. Check permissions or update your device/browser."
+            "Unable to start the camera. Please check your browser settings or update your iOS version."
           );
           console.error("QR Scanner initialization error:", err);
         });
@@ -128,13 +134,6 @@
       errorDiv.style.display = "block";
       errorDiv.textContent = message;
     }
-
-    // Debugging info
-    console.log("Script loaded successfully.");
-    console.log(
-      "Check if your browser supports camera access: ",
-      navigator.mediaDevices && typeof navigator.mediaDevices.getUserMedia === "function"
-    );
   </script>
 </body>
 </html>
