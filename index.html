@@ -37,6 +37,20 @@
             width: 300px;
             height: 200px;
             border: 2px solid black;
+            margin-top: 20px;
+        }
+        .scanner button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .scanner button:hover {
+            background-color: #45a049;
         }
         footer {
             position: fixed;
@@ -56,7 +70,8 @@
     </div>
     <div class="scanner">
         <h2>QR Code Scanner</h2>
-        <video id="preview"></video>
+        <button id="startScanner">Start Scanner</button>
+        <video id="preview" style="display:none;"></video>
     </div>
     <footer>
         <p>Pandit Karuppan Road, Thevara, Kochi - 682013 | <a href="https://shcollege.ac.in" style="color: lightblue;">shcollege.ac.in</a></p>
@@ -70,14 +85,17 @@
             alert('Scanned content: ' + content);
         });
 
-        Instascan.Camera.getCameras().then(function (cameras) {
-            if (cameras.length > 0) {
-                scanner.start(cameras[0]);
-            } else {
-                alert('No cameras found.');
-            }
-        }).catch(function (e) {
-            console.error(e);
+        document.getElementById('startScanner').addEventListener('click', function () {
+            Instascan.Camera.getCameras().then(function (cameras) {
+                if (cameras.length > 0) {
+                    scanner.start(cameras[0]);
+                    document.getElementById('preview').style.display = 'block';
+                } else {
+                    alert('No cameras found.');
+                }
+            }).catch(function (e) {
+                console.error(e);
+            });
         });
     </script>
 </body>
