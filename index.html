@@ -33,11 +33,11 @@
             display: inline-block;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
-        .scanner video {
+        #reader {
             width: 300px;
-            height: 200px;
+            margin: auto;
             border: 2px solid black;
-            margin-top: 20px;
+            background: white;
         }
         .scanner button {
             background-color: #4CAF50;
@@ -70,32 +70,54 @@
     </div>
     <div class="scanner">
         <h2>QR Code Scanner</h2>
-        <button id="startScanner">Start Scanner</button>
-        <video id="preview" style="display:none;"></video>
+        <div id="reader"></div>
+        <button id="stopScanner" style="display:none;">Stop Scanner</button>
     </div>
     <footer>
-        <p>Pandit Karuppan Road, Thevara, Kochi - 682013 | <a href="https://shcollege.ac.in" style="color: lightblue;">shcollege.ac.in</a></p>
+        <p>Pandit Karuppan Road, Thevara, Kochi - 682013 | 
+            <a href="https://shcollege.ac.in" style="color: lightblue;">shcollege.ac.in</a>
+        </p>
     </footer>
 
-    <!-- Include Instascan for QR Code Scanning -->
-    <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+    <!-- HTML5-QRCode Library -->
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
     <script>
-        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
-        scanner.addListener('scan', function (content) {
-            alert('Scanned content: ' + content);
-        });
+        const qrCodeReader = new Html5Qrcode("reader");
 
-        document.getElementById('startScanner').addEventListener('click', function () {
-            Instascan.Camera.getCameras().then(function (cameras) {
-                if (cameras.length > 0) {
-                    scanner.start(cameras[0]);
-                    document.getElementById('preview').style.display = 'block';
-                } else {
-                    alert('No cameras found.');
+        function startScanner() {
+            qrCodeReader.start(
+                { facingMode: "environment" }, // Use back camera by default
+                {
+                    fps: 10, // Scanning speed
+                    qrbox: { width: 250, height: 250 } // QR Code scanning area
+                },
+                (decodedText, decodedResult) => {
+                    alert(`Scanned content: ${decodedText}`);
+                },
+                (errorMessage) => {
+                    console.log(`QR Code scan error: ${errorMessage}`);
                 }
-            }).catch(function (e) {
-                console.error(e);
+            ).catch(err => {
+                console.error(`Failed to start scanner: ${err}`);
+                alert("Unable to access the camera. Please check permissions.");
             });
+        }
+
+        function stopScanner() {
+            qrCodeReader.stop().then(() => {
+                console.log("QR Code scanner stopped.");
+            }).catch(err => {
+                console.error("Error stopping scanner: ", err);
+            });
+        }
+
+        // Automatically start scanner on load
+        startScanner();
+
+        // Stop scanner on button click
+        document.getElementById("stopScanner").addEventListener("click", function () {
+            stopScanner();
+            this.style.display = "none";
         });
     </script>
 </body>
