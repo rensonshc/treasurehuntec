@@ -35,9 +35,10 @@
         }
         #reader {
             width: 300px;
-            margin: auto;
+            margin: 10px auto;
             border: 2px solid black;
             background: white;
+            display: none; /* Hidden initially */
         }
         .scanner button {
             background-color: #4CAF50;
@@ -69,9 +70,10 @@
         <h1 class="title">Treasure Hunt East Campus</h1>
     </div>
     <div class="scanner">
-        <h2>QR Code Scanner</h2>
-        <div id="reader"></div>
+        <h2>Scan QR Code</h2>
+        <button id="startScanner">Start Scanner</button>
         <button id="stopScanner" style="display:none;">Stop Scanner</button>
+        <div id="reader"></div>
     </div>
     <footer>
         <p>Pandit Karuppan Road, Thevara, Kochi - 682013 | 
@@ -84,7 +86,8 @@
     <script>
         const qrCodeReader = new Html5Qrcode("reader");
 
-        function startScanner() {
+        // Start the QR Code Scanner
+        document.getElementById("startScanner").addEventListener("click", function () {
             qrCodeReader.start(
                 { facingMode: "environment" }, // Use back camera by default
                 {
@@ -93,31 +96,33 @@
                 },
                 (decodedText, decodedResult) => {
                     alert(`Scanned content: ${decodedText}`);
+                    qrCodeReader.stop(); // Automatically stop the scanner after successful scan
+                    document.getElementById("reader").style.display = "none";
+                    document.getElementById("startScanner").style.display = "block";
+                    document.getElementById("stopScanner").style.display = "none";
                 },
                 (errorMessage) => {
                     console.log(`QR Code scan error: ${errorMessage}`);
                 }
-            ).catch(err => {
+            ).then(() => {
+                document.getElementById("reader").style.display = "block";
+                document.getElementById("startScanner").style.display = "none";
+                document.getElementById("stopScanner").style.display = "block";
+            }).catch(err => {
                 console.error(`Failed to start scanner: ${err}`);
                 alert("Unable to access the camera. Please check permissions.");
             });
-        }
+        });
 
-        function stopScanner() {
+        // Stop the QR Code Scanner
+        document.getElementById("stopScanner").addEventListener("click", function () {
             qrCodeReader.stop().then(() => {
-                console.log("QR Code scanner stopped.");
+                document.getElementById("reader").style.display = "none";
+                document.getElementById("startScanner").style.display = "block";
+                document.getElementById("stopScanner").style.display = "none";
             }).catch(err => {
                 console.error("Error stopping scanner: ", err);
             });
-        }
-
-        // Automatically start scanner on load
-        startScanner();
-
-        // Stop scanner on button click
-        document.getElementById("stopScanner").addEventListener("click", function () {
-            stopScanner();
-            this.style.display = "none";
         });
     </script>
 </body>
